@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import SelectKBest, f_regression
 from statsmodels.tsa.seasonal import seasonal_decompose
-
+import joblib
 from config.settings import KEY_FEATURES, TARGET_COL, LAGS, WINDOWS, TARGET_COLS
 
 def engineer_features(df, target_col=TARGET_COL, key_features=KEY_FEATURES, 
@@ -190,3 +190,42 @@ def split_data(features, targets, val_size=0.2):
     print(f"X_train shape={X_train.shape}, X_val shape={X_val.shape}")
     
     return X_train, X_val, y_train, y_val
+
+def save_preprocessors(feature_scaler, target_scaler, feature_columns, save_path):
+    """
+    전처리기(스케일러) 및 특성 컬럼 저장
+    
+    Args:
+        feature_scaler: 특성 스케일러
+        target_scaler: 타겟 스케일러
+        feature_columns: 선택된 특성 컬럼
+        save_path: 저장 경로
+    """
+    joblib.dump({
+        'feature_scaler': feature_scaler,
+        'target_scaler': target_scaler
+    }, save_path)
+    print(f"스케일러가 {save_path}에 저장되었습니다.")
+    
+    # 특성 컬럼 저장
+    joblib.dump(feature_columns, save_path.replace('scalers', 'feature_columns'))
+    print(f"특성 컬럼이 {save_path.replace('scalers', 'feature_columns')}에 저장되었습니다.")
+
+def load_preprocessors(scaler_path, feature_cols_path):
+    """
+    전처리기(스케일러) 및 특성 컬럼 로드
+    
+    Args:
+        scaler_path: 스케일러 파일 경로
+        feature_cols_path: 특성 컬럼 파일 경로
+        
+    Returns:
+        특성 스케일러, 타겟 스케일러, 특성 컬럼
+    """
+    scalers = joblib.load(scaler_path)
+    feature_scaler = scalers['feature_scaler']
+    target_scaler = scalers['target_scaler']
+    
+    feature_columns = joblib.load(feature_cols_path)
+    
+    return feature_scaler, target_scaler, feature_columns
