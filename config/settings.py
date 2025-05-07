@@ -10,6 +10,8 @@ SUBMISSION_DIR = "./prediction_csv"
 
 # 모델 저장 경로
 MODEL_PATH = os.path.join(MODEL_DIR, "xgboost_model.joblib")
+SCALER_PATH = os.path.join(MODEL_DIR, "scalers.joblib")
+FEATURE_COLS_PATH = os.path.join(MODEL_DIR, "feature_columns.joblib")
 
 # 주요 특성 정의
 KEY_FEATURES = ['BCOMCL_INDX', 'BCOMNG_INDX', 'DJI_INDX', 'CPI_Energy_Seasonally_Adjusted_USA', 'high_temperature', 'low_temperature', 'Natural_Gas_US_Henry_Hub_Gas']
