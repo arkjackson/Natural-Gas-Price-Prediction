@@ -1,12 +1,31 @@
+
+"""
+데이터 전처리 및 특성 엔지니어링 관련 함수들을 정의하는 모듈
+"""
+
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from statsmodels.tsa.seasonal import seasonal_decompose
 from sklearn.feature_selection import SelectKBest, f_regression
-from config.settings import KEY_FEATURES, TARGET_COL, LAGS, WINDOWS
+from statsmodels.tsa.seasonal import seasonal_decompose
 
-# 특성 엔지니어링 함수
-def engineer_features(df, target_col, key_features, lags=LAGS, windows=WINDOWS):
+from config.settings import KEY_FEATURES, TARGET_COL, LAGS, WINDOWS, TARGET_COLS
+
+def engineer_features(df, target_col=TARGET_COL, key_features=KEY_FEATURES, 
+                      lags=LAGS, windows=WINDOWS):
+    """
+    특성 엔지니어링 함수
+    
+    Args:
+        df: 입력 데이터프레임
+        target_col: 타겟 컬럼 이름
+        key_features: 주요 특성 리스트
+        lags: 시차(lag) 기간 리스트
+        windows: 롤링 윈도우 크기 리스트
+        
+    Returns:
+        특성이 추가된 데이터프레임
+    """
     df = df.copy()  # 데이터 프래그먼테이션 방지를 위한 명시적 복사
     
     # 1. 시차(lag) 및 롤링 통계치 생성
@@ -44,23 +63,32 @@ def engineer_features(df, target_col, key_features, lags=LAGS, windows=WINDOWS):
         log_df = pd.DataFrame(log_cols, index=df.index)
         df = pd.concat([df, log_df], axis=1)
     
-    print(f"특성 엔지니어링 후 shape: {df.shape}, 컬럼: {df.columns.tolist()}")
+    print(f"특성 엔지니어링 후 shape: {df.shape}, 컬럼 수: {len(df.columns)}")
     return df
 
-# 데이터 로딩 및 전처리
 def load_and_preprocess_data(file_path, is_train=True, train_feature_columns=None):
+    """
+    데이터 로딩 및 전처리
+    
+    Args:
+        file_path: 데이터 파일 경로
+        is_train: 학습 데이터 여부
+        train_feature_columns: 학습 시 선택된 특성 컬럼 (테스트 데이터 처리 시 사용)
+        
+    Returns:
+        전처리된 데이터프레임, 특성, 타겟(학습 시), 선택된 특성 컬럼
+    """
     # CSV 파일 로드
     df = pd.read_csv(file_path)
     
     print(f"{file_path}에서 데이터 로드, shape: {df.shape}")
-    print(f"컬럼: {df.columns.tolist()}")
     
     # 날짜 컬럼을 datetime으로 변환
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values('date')
     
     # 특성 엔지니어링 적용
-    df = engineer_features(df, target_col=TARGET_COL, key_features=KEY_FEATURES)
+    df = engineer_features(df)
     
     # 특성 엔지니어링 후 결측치 처리
     df = df.fillna(method='ffill').fillna(method='bfill')
@@ -68,9 +96,9 @@ def load_and_preprocess_data(file_path, is_train=True, train_feature_columns=Non
     
     if is_train:
         # 타겟 변수 생성: 1, 2, 3개월 후 가격
-        df['price_t+1'] = df['Natural_Gas_US_Henry_Hub_Gas'].shift(-1)
-        df['price_t+2'] = df['Natural_Gas_US_Henry_Hub_Gas'].shift(-2)
-        df['price_t+3'] = df['Natural_Gas_US_Henry_Hub_Gas'].shift(-3)
+        df['price_t+1'] = df[TARGET_COL].shift(-1)
+        df['price_t+2'] = df[TARGET_COL].shift(-2)
+        df['price_t+3'] = df[TARGET_COL].shift(-3)
         
         # 마지막 3개 행 제거(타겟 없음)
         df = df[:-3]
@@ -78,7 +106,7 @@ def load_and_preprocess_data(file_path, is_train=True, train_feature_columns=Non
         print(f"마지막 3개 행 제거 후 shape: {df.shape}")
         
         # 특성과 타겟 분리
-        features = df.drop(columns=['date', 'price_t+1', 'price_t+2', 'price_t+3'])
+        features = df.drop(columns=['date'] + TARGET_COLS)
         
         # 상관관계 분석을 통한 특성 선택(학습 데이터만)
         selector = SelectKBest(score_func=f_regression, k=min(50, len(features.columns)))
@@ -86,11 +114,11 @@ def load_and_preprocess_data(file_path, is_train=True, train_feature_columns=Non
         selected_features = features.columns[selector.get_support()].tolist()
         features = features[selected_features]
         
-        targets = df[['price_t+1', 'price_t+2', 'price_t+3']]
+        targets = df[TARGET_COLS]
         
         # 학습 특성 컬럼 저장
         train_feature_columns = features.columns.tolist()
-        # print(f"특성 선택 후 학습 특성: {train_feature_columns}")
+        print(f"특성 선택 후 학습 특성 수: {len(train_feature_columns)}")
     else:
         # 테스트 데이터: 타겟 생성 없음
         # 학습 데이터와 컬럼 맞추기
@@ -100,21 +128,30 @@ def load_and_preprocess_data(file_path, is_train=True, train_feature_columns=Non
         
         missing_cols = [col for col in train_feature_columns if col not in df.columns]
         if missing_cols:
-            print(f"경고: 테스트 데이터에 없는 컬럼: {missing_cols}")
-            print(f"공통 컬럼 사용: {common_cols}")
+            print(f"경고: 테스트 데이터에 없는 컬럼: {len(missing_cols)}개")
         
         features = df[common_cols]
         targets = None
-        print(f"테스트 특성: {features.columns.tolist()}")
+        print(f"테스트 특성 수: {len(common_cols)}")
     
     return df, features, targets, train_feature_columns if is_train else common_cols
 
-# 데이터 스케일링
+
 def scale_data(features, targets=None):
+    """
+    데이터 스케일링
+    
+    Args:
+        features: 특성 데이터프레임
+        targets: 타겟 데이터프레임 (옵션)
+        
+    Returns:
+        스케일링된 특성, 스케일링된 타겟(옵션), 특성 스케일러, 타겟 스케일러
+    """
     if features.empty:
         raise ValueError("특성 DataFrame이 비어 있습니다.")
     
-    print(f"스케일링할 특성 컬럼: {features.columns.tolist()}, shape: {features.shape}")
+    print(f"스케일링할 특성 shape: {features.shape}")
     feature_scaler = StandardScaler()
     feature_scaled = feature_scaler.fit_transform(features)
     
@@ -126,8 +163,18 @@ def scale_data(features, targets=None):
         return feature_scaled, targets_scaled, feature_scaler, target_scaler
     return feature_scaled, None, feature_scaler, None
 
-# 학습/검증 데이터 분할
 def split_data(features, targets, val_size=0.2):
+    """
+    학습/검증 데이터 분할
+    
+    Args:
+        features: 특성 데이터
+        targets: 타겟 데이터
+        val_size: 검증 데이터 비율
+        
+    Returns:
+        X_train, X_val, y_train, y_val
+    """
     n = len(features)
     if n == 0:
         raise ValueError("분할할 데이터가 없습니다.")
@@ -135,13 +182,11 @@ def split_data(features, targets, val_size=0.2):
     if train_size == 0:
         raise ValueError("분할 후 학습 세트가 비어 있습니다.")
     
-    print(f"데이터 분할: 특성 shape={features.shape}, 타겟 shape={targets.shape}")
     X_train = features[:train_size]
     X_val = features[train_size:]
     y_train = targets[:train_size]
     y_val = targets[train_size:]
     
-    print(f"X_train shape={X_train.shape}, y_train shape={y_train.shape}")
-    print(f"X_val shape={X_val.shape}, y_val shape={y_val.shape}")
+    print(f"X_train shape={X_train.shape}, X_val shape={X_val.shape}")
     
     return X_train, X_val, y_train, y_val
