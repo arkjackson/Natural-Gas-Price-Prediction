@@ -4,7 +4,7 @@
 
 import pandas as pd
 
-from config.settings import TEST_FILE_PATH, MODEL_PATH, SCALER_PATH, FEATURE_COLS_PATH, SUBMISSION_DIR
+from config.settings import TEST_DATA_PATH, MODEL_PATH, SCALER_PATH, FEATURE_COLS_PATH, SUBMISSION_DIR
 from data.preprocess import load_and_preprocess_data, load_preprocessors
 from models.xgb_model import load_model
 
@@ -33,7 +33,7 @@ def predict_prices(model, input_data, feature_scaler, target_scaler):
     
     return predictions
 
-def generate_predictions(test_file=TEST_FILE_PATH, model_path=MODEL_PATH, 
+def generate_predictions(test_file=TEST_DATA_PATH, model_path=MODEL_PATH, 
                         scaler_path=SCALER_PATH, feature_cols_path=FEATURE_COLS_PATH,
                         output_path=None):
     """
