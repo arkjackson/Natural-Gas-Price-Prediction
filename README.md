@@ -1,34 +1,66 @@
 # Natural-Gas-Price-Prediction
 
-This project predicts future natural gas prices using machine learning models (CatBoost, LightGBM, XGBoost).
+This repository contains a machine learning pipeline to forecast natural gas prices for the next 1–3 months using XGBoost with engineered time series features and automated hyperparameter tuning.
 
 ## 📁 Project Structure
 
-- `config/`: Environment setting
-- `data/`: Train, Test data (CSV format) and Preprocessing module
-- `models/`: Training model modules
-- `utils/`: Utility modules (metrics)
-- `train.py`: Training model script
-- `inference.py`: Inference script (test set prediction)
-- `requirements.txt`: Required package
+├── config/ # Environment settings (e.g., constants, paths)
+├── data/ # Raw/processed data and preprocessing module
+├── models/ # Model training and tuning logic
+├── utils/ # Utility functions (e.g., evaluation metric)
+├── main.py/ # Model training script
+├── inference.py/ # Inference script on test set 
+├── requirements.txt/ # Required Python packages
 
 ## 📊 Sample Data Format
 
 | date       | price | price\_t+1 | price\_t+2 | price\_t+3 |
 | ---------- | ----- | ---------- | ---------- | ---------- |
-| 2003-09-30 | 2.55  | 2.63       | 2.70       | 2.68       |
+| 2003-09-30 | 4.62095  | 4.63391   | 4.49167    | 6.14     |
 
-## 🧠 Model Overview
+- `price_t+1`, `price_t+2`, `price_t+3`: Future prices (1, 2, 3 months ahead)
 
-- Algorithm: XGBoost + MultiOutputRegressor
-- Target: price_t+1, price_t+2, price_t+3 (1–3 month ahead forecasts)
-- Features:
-    - Lag variables
-    - Rolling means & standard deviations
-    - Seasonal decomposition
-    - Log-transformed variables
-- Evaluation Metric: MAPE (Mean Absolute Percentage Error)
+## 🧠 Modeling Overview
 
+- **Algorithm**: XGBoost + MultiOutputRegressor
+- **Target Variables**: 'price_t+1', 'price_t+2', 'price_t+3'
+- **Feature Engineering**:
+    - Lag features
+    - Rolling statistics (mean & std)
+    - Month dummies (seasonality)
+    - Log-transformed features
+    - Feature selection with 'SelectKBest'
+- **Hyperparameter Optimization**: [Optuna](https://optuna.org/)
+- **Evaluation Metric**: MAPE (Mean Absolute Percentage Error)
+
+## ⚙️ Training Pipeline
+
+1. Load raw CSV data and sort by date
+2. Generate time-series features and perform seasonal decomposition
+3. Select top-K features via correlation with `price_t+1`
+4. Split data into train/validation sets (time-based split)
+5. Optimize XGBoost hyperparameters via Optuna
+6. Train MultiOutputRegressor with best parameters
+7. Save model, scalers, and feature column list
+
+## Result
+
+- 1. Metrics
+
+| model   | MAE   | RMSE | MAPE |
+| --------| ----- | ---- | -----|
+| XGBoost | 0.93  | 1.39 | 20.94|
+
+- 2. Pattern Analysis
+
+![natural_gas_price](results/img/natural gas price.png)
+
+![mae_prediction](results/img/mae prediction.png)
+
+-  MAE values surge as natural gas prices soar in first half, mid-year 2022
+    - 2022-02: Russia-Ukraine War (European Gas Supply Disruptions)
+    - 2022-06: 프리포트 LNG 폭발 사고 Freeport LNG Explosion (Closing 15 million tonnes of facility annually)
+    
 ## 📌 TODO
 
-- Add text/news based event feature
+- [ ] Integrate event-driven features using text/news data
