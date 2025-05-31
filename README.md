@@ -47,21 +47,21 @@ NATURAL-GAS-PRICE-PREDICTION/
 
 ## Result
 
-1. Metrics
+- Metrics
 
 | model   | MAE   | RMSE | MAPE |
 | --------| ----- | ---- | -----|
 | XGBoost | 0.93  | 1.39 | 20.94|
 
-2. Pattern Analysis
+- Pattern Analysis
 
-![natural gas price](results/img/natural gas price.png)
+![natural gas price](./results/img/natural gas price.png)
 
-![mae prediction](results/img/mae prediction.png)
+![mae prediction](./results/img/mae prediction.png)
 
 -  MAE values surge as natural gas prices soar in first half, mid-year 2022
     - 2022-02: Russia-Ukraine War (European Gas Supply Disruptions)
-    - 2022-06: 프리포트 LNG 폭발 사고 Freeport LNG Explosion (Closing 15 million tonnes of facility annually)
+    - 2022-06: Freeport LNG Explosion (Closing 15 million tonnes of facility annually)
 
 ## 📌 TODO
 
