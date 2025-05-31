@@ -3,7 +3,8 @@
 This repository contains a machine learning pipeline to forecast natural gas prices for the next 1–3 months using XGBoost with engineered time series features and automated hyperparameter tuning.
 
 ## 📁 Project Structure
-
+```
+NATURAL-GAS-PRICE-PREDICTION/
 ├── config/ # Environment settings (e.g., constants, paths)
 ├── data/ # Raw/processed data and preprocessing module
 ├── models/ # Model training and tuning logic
@@ -11,6 +12,7 @@ This repository contains a machine learning pipeline to forecast natural gas pri
 ├── main.py/ # Model training script
 ├── inference.py/ # Inference script on test set 
 ├── requirements.txt/ # Required Python packages
+```
 
 ## 📊 Sample Data Format
 
@@ -45,22 +47,22 @@ This repository contains a machine learning pipeline to forecast natural gas pri
 
 ## Result
 
-- 1. Metrics
+1. Metrics
 
 | model   | MAE   | RMSE | MAPE |
 | --------| ----- | ---- | -----|
 | XGBoost | 0.93  | 1.39 | 20.94|
 
-- 2. Pattern Analysis
+2. Pattern Analysis
 
-![natural_gas_price](results/img/natural gas price.png)
+![natural gas price](results/img/natural gas price.png)
 
-![mae_prediction](results/img/mae prediction.png)
+![mae prediction](results/img/mae prediction.png)
 
 -  MAE values surge as natural gas prices soar in first half, mid-year 2022
     - 2022-02: Russia-Ukraine War (European Gas Supply Disruptions)
     - 2022-06: 프리포트 LNG 폭발 사고 Freeport LNG Explosion (Closing 15 million tonnes of facility annually)
-    
+
 ## 📌 TODO
 
 - [ ] Integrate event-driven features using text/news data
