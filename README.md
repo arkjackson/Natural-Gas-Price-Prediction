@@ -55,9 +55,10 @@ NATURAL-GAS-PRICE-PREDICTION/
 
 - Pattern Analysis
 
-![natural gas price](./results/img/natural gas price.png)
+![natural gas price](./results/img/natural%20gas%20price.png)
 
-![mae prediction](./results/img/mae prediction.png)
+![mae prediction](./results/img/mae%20prediction.png)
+
 
 -  MAE values surge as natural gas prices soar in first half, mid-year 2022
     - 2022-02: Russia-Ukraine War (European Gas Supply Disruptions)
