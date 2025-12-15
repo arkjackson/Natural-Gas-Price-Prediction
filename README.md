@@ -4,7 +4,7 @@ This repository contains a machine learning pipeline to forecast natural gas pri
 
 ## 📁 Project Structure
 ```
-NATURAL-GAS-PRICE-PREDICTION/
+Natural-Gas-Price-Prediction/
 ├── config/ # Environment settings (e.g., constants, paths)
 ├── data/ # Raw/processed data and preprocessing module
 ├── models/ # Model training and tuning logic
@@ -16,16 +16,16 @@ NATURAL-GAS-PRICE-PREDICTION/
 
 ## 📊 Sample Data Format
 
-| date       | price | price\_t+1 | price\_t+2 | price\_t+3 |
+| date       | price | price\_(t+1) | price\_(t+2) | price\_(t+3) |
 | ---------- | ----- | ---------- | ---------- | ---------- |
-| 2003-09-30 | 4.62095  | 4.63391   | 4.49167    | 6.14     |
+| 2003-09-30 | 4.62  | 4.63   | 4.49    | 6.14     |
 
-- `price_t+1`, `price_t+2`, `price_t+3`: Future prices (1, 2, 3 months ahead)
+- `price_(t+1)`, `price_(t+2)`, `price_(t+3)`: Future prices (1, 2, 3 months ahead)
 
 ## 🧠 Modeling Overview
 
 - **Algorithm**: XGBoost + MultiOutputRegressor
-- **Target Variables**: 'price_t+1', 'price_t+2', 'price_t+3'
+- **Target Variables**: 'price_(t+1)', 'price_(t+2)', 'price_(t+3)'
 - **Feature Engineering**:
     - Lag features
     - Rolling statistics (mean & std)
@@ -39,13 +39,13 @@ NATURAL-GAS-PRICE-PREDICTION/
 
 1. Load raw CSV data and sort by date
 2. Generate time-series features and perform seasonal decomposition
-3. Select top-K features via correlation with `price_t+1`
+3. Select top-K features via correlation with `price_(t+1)`
 4. Split data into train/validation sets (time-based split)
 5. Optimize XGBoost hyperparameters via Optuna
 6. Train MultiOutputRegressor with best parameters
 7. Save model, scalers, and feature column list
 
-## Result
+## 📄 Result
 
 - Metrics
 
