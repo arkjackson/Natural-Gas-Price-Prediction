@@ -16,9 +16,10 @@ Natural-Gas-Price-Prediction/
 
 ## 📊 Sample Data Format
 
-| date       | price | price\_(t+1) | price\_(t+2) | price\_(t+3) |
-| ---------- | ----- | ---------- | ---------- | ---------- |
-| 2003-09-30 | 4.62  | 4.63   | 4.49    | 6.14     |
+|    date    | `price` | `price_(t+1)` | `price_(t+2)` | `price_(t+3)` |
+|:----------:|:-------:|:-------------:|:-------------:|:-------------:|
+| 2003-09-30 |  4.62   |     4.63      |     4.49      |     6.14      |
+
 
 - `price_(t+1)`, `price_(t+2)`, `price_(t+3)`: Future prices (1, 2, 3 months ahead)
 
@@ -49,9 +50,9 @@ Natural-Gas-Price-Prediction/
 
 - Metrics
 
-| model   | MAE   | RMSE | MAPE |
-| --------| ----- | ---- | -----|
-| XGBoost | 0.93  | 1.39 | 20.94|
+|  model   |  MAE  | RMSE | MAPE |
+|:--------:|:-----:|:----:|:----:|
+| XGBoost  |  0.93 | 1.39 | 20.94|
 
 - Pattern Analysis
 
