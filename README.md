@@ -2,27 +2,6 @@
 
 This repository contains a machine learning pipeline to forecast natural gas prices for the next 1–3 months using XGBoost with engineered time series features and automated hyperparameter tuning.
 
-## 📁 Project Structure
-```
-Natural-Gas-Price-Prediction/
-├── config/ # Environment settings (e.g., constants, paths)
-├── data/ # Raw/processed data and preprocessing module
-├── models/ # Model training and tuning logic
-├── utils/ # Utility functions (e.g., evaluation metric)
-├── main.py/ # Model training script
-├── inference.py/ # Inference script on test set 
-├── requirements.txt/ # Required Python packages
-```
-
-## 📊 Sample Data Format
-
-|    date    | `price` | `price_(t+1)` | `price_(t+2)` | `price_(t+3)` |
-|:----------:|:-------:|:-------------:|:-------------:|:-------------:|
-| 2003-09-30 |  4.62   |     4.63      |     4.49      |     6.14      |
-
-
-- `price_(t+1)`, `price_(t+2)`, `price_(t+3)`: Future prices (1, 2, 3 months ahead)
-
 ## 🧠 Modeling Overview
 
 - **Algorithm**: XGBoost + MultiOutputRegressor
@@ -46,6 +25,13 @@ Natural-Gas-Price-Prediction/
 6. Train MultiOutputRegressor with best parameters
 7. Save model, scalers, and feature column list
 
+## 📊 Sample Data Format
+
+|    date    | `price` | `price_(t+1)` | `price_(t+2)` | `price_(t+3)` |
+|:----------:|:-------:|:-------------:|:-------------:|:-------------:|
+| 2003-09-30 |  4.62   |     4.63      |     4.49      |     6.14      |
+- `price_(t+1)`, `price_(t+2)`, `price_(t+3)`: Future prices (1, 2, 3 months ahead)
+
 ## 📄 Result
 
 - Metrics
@@ -64,6 +50,18 @@ Natural-Gas-Price-Prediction/
 -  MAE values surge as natural gas prices soar in first half, mid-year 2022
     - 2022-02: Russia-Ukraine War (European Gas Supply Disruptions)
     - 2022-06: Freeport LNG Explosion (Closing 15 million tonnes of facility annually)
+
+## 📁 Project Structure
+```
+Natural-Gas-Price-Prediction/
+├── config/ # Environment settings (e.g., constants, paths)
+├── data/ # Raw/processed data and preprocessing module
+├── models/ # Model training and tuning logic
+├── utils/ # Utility functions (e.g., evaluation metric)
+├── main.py/ # Model training script
+├── inference.py/ # Inference script on test set 
+├── requirements.txt/ # Required Python packages
+```
 
 ## 📌 TODO
 
